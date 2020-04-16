@@ -1,12 +1,17 @@
-// Run 'npm i -g eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks babel-eslint
+// Run 'npm i -g eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks  @typescript-eslint/parser @typescript-eslint/eslint-plugin
 module.exports = {
     env: {
         node: true,
         browser: true,
         es6: true
     },
-    extends: ['eslint:recommended', 'plugin:react/recommended'],
-    parser: 'babel-eslint',
+    extends: [
+        'eslint:recommended',
+        'plugin:react/recommended',
+        'plugin:@typescript-eslint/eslint-recommended',
+        'plugin:@typescript-eslint/recommended'
+    ],
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaFeatures: {
             jsx: true
@@ -17,14 +22,14 @@ module.exports = {
     settings: {
         'import/resolver': {
             node: {
-                extensions: ['.js', '.jsx']
+                extensions: ['.js', '.jsx', '.ts', '.tsx']
             }
         },
         react: {
             version: 'detect'
         }
     },
-    plugins: ['import', 'react', 'react-hooks'],
+    plugins: ['import', 'react', 'react-hooks', '@typescript-eslint'],
     rules: {
         // Common errors
         'for-direction': 'error',
