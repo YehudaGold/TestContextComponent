@@ -17,8 +17,14 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.(js|jsx)$/,
-                use: 'babel-loader',
+                enforce: 'pre',
+                est: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'source-map-loader'
+            },
+            {
+                test: /\.(t|j)sx?$/,
+                use: {loader: 'ts-loader'},
                 exclude: /node_modules/
             },
             {
@@ -33,7 +39,7 @@ module.exports = {
     },
     plugins: [htmlWebpackPlugin],
     resolve: {
-        extensions: ['.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx']
     },
     devtool: 'eval-source-map',
     devServer: {
