@@ -7,9 +7,9 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        'plugin:react/recommended',
         'plugin:@typescript-eslint/eslint-recommended',
-        'plugin:@typescript-eslint/recommended'
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react/recommended'
     ],
     parser: '@typescript-eslint/parser',
     parserOptions: {
@@ -49,12 +49,6 @@ module.exports = {
         'no-empty-character-class': 'error',
         'no-ex-assign': 'error',
         'no-extra-boolean-cast': 'error',
-        'no-extra-parens': ['warn', 'all', {
-            conditionalAssign: true,
-            nestedBinaryExpressions: false,
-            ignoreJSX: 'all',
-            enforceForArrowConditionals: false
-        }],
         'no-extra-semi': 'error',
         'no-func-assign': 'error',
         'no-inner-declarations': 'error',
@@ -78,7 +72,7 @@ module.exports = {
 
         // Es6
         'arrow-body-style': ['error', 'as-needed', {requireReturnForObjectLiteral: false}],
-        'arrow-parens': ['warn', 'as-needed', {requireForBlockBody: true}],
+        'arrow-parens': ['warn', 'as-needed' /** , {requireForBlockBody: true} https://github.com/typescript-eslint/typescript-eslint/issues/14 **/ ],
         'arrow-spacing': ['error', {before: true, after: true}],
         'constructor-super': 'error',
         'generator-star-spacing': ['error', {before: false, after: true}],
@@ -715,6 +709,14 @@ module.exports = {
         'react/state-in-constructor': ['error', 'never'],
         'react/static-property-placement': 'error',
         'react/style-prop-object': 'error',
-        'react/void-dom-elements-no-children': 'error'
+        'react/void-dom-elements-no-children': 'error',
+
+        // type script
+        "@typescript-eslint/no-extra-parens": ['warn', 'all', {
+            conditionalAssign: true,
+            nestedBinaryExpressions: false,
+            ignoreJSX: 'all',
+            enforceForArrowConditionals: false
+        }]
     }
 };

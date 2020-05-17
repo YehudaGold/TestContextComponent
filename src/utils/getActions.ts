@@ -10,13 +10,13 @@ const reactLifecycleMethods = [
     'componentDidCatch'
 ];
 
-export default (componentInstance, BaseClass) => {
-    const actions = {};
+export default <T extends object>(componentInstance: T, BaseClass?: ObjectConstructor): Partial<T> => {
+    const actions: Partial<T> = {};
 
     getAllMethodNames(componentInstance, BaseClass)
-        .filter(componentMethodNames => !reactLifecycleMethods.includes(componentMethodNames))
-        .filter(componentMethodNames => !componentMethodNames.startsWith('_'))
-        .forEach((contextActionNames) => {
+        .filter(componentMethodNames => !reactLifecycleMethods.includes(componentMethodNames as string))
+        .filter(componentMethodNames => !(componentMethodNames as string).startsWith('_'))
+        .forEach(contextActionNames => {
             actions[contextActionNames] = componentInstance[contextActionNames];
         });
 
