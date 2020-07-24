@@ -14,7 +14,7 @@ body {
     border-color: #00000052;
 }
 
-.list > * {
+.list>* {
     width: -webkit-fill-available;
     margin: 0.1em;
     padding: 01em;

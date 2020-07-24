@@ -390,10 +390,10 @@ module.exports = {
         'no-restricted-globals': ['error', 'isFinite', 'isNaN'],
         'no-shadow': 'warn',
         'no-shadow-restricted-names': 'error',
-        'no-undef': 'error',
+        'no-undef': 'off',
         'no-undef-init': 'error',
         'no-undefined': 'warn',
-        'no-unused-vars': ['error', {vars: 'all', args: 'after-used', ignoreRestSiblings: true}],
+        // 'no-unused-vars': ['error', {vars: 'all', args: 'after-used', ignoreRestSiblings: true}], ts rule
         'no-use-before-define': ['error', {functions: true, classes: true, variables: true}],
 
         // Best-practices
@@ -409,7 +409,7 @@ module.exports = {
         'dot-location': ['error', 'property'],
         eqeqeq: ['error', 'always', {null: 'ignore'}],
         'guard-for-in': 'error',
-        'max-classes-per-file': ['warn', 1],
+        // 'max-classes-per-file': ['warn', 1],
         'no-alert': 'warn',
         'no-caller': 'error',
         'no-case-declarations': 'error',
@@ -602,7 +602,7 @@ module.exports = {
         'import/no-unassigned-import': 'off',
         'import/no-unused-modules': ['warn', {
             missingExports: false,
-            ignoreExports: ['src'],
+            // ignoreExports: ['src'],
             unusedExports: true
         }],
         'import/no-unresolved': ['error', {commonjs: true, caseSensitive: true}],
