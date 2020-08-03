@@ -1,4 +1,4 @@
-// Run 'npm i -g eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks  @typescript-eslint/parser @typescript-eslint/eslint-plugin
+// Run 'npm i -g eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks  @typescript-eslint/parser @typescript-eslint/eslint-plugin'
 module.exports = {
     env: {
         node: true,
@@ -7,10 +7,10 @@ module.exports = {
     },
     extends: [
         'eslint:recommended',
-        'plugin:@typescript-eslint/eslint-recommended',
         'plugin:@typescript-eslint/recommended',
         'plugin:react/recommended'
     ],
+    ignorePatterns: ['dist/'],
     parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaFeatures: {
@@ -64,11 +64,11 @@ module.exports = {
         'no-unreachable': 'error',
         'no-unsafe-finally': 'error',
         'no-unsafe-negation': 'error',
-        'no-negated-in-lhs': 'off',
-        'require-atomic-updates': 'off',
+        'no-negated-in-lhs': 'error',
+        'require-atomic-updates': 'error',
         'use-isnan': 'error',
         'valid-jsdoc': 'off',
-        'valid-typeof': ['error', {requireStringLiterals: true}],
+        'valid-typeof': ['off', {requireStringLiterals: true}], // Babel rule fix
 
         // Es6
         'arrow-body-style': ['error', 'as-needed', {requireReturnForObjectLiteral: false}],
@@ -82,7 +82,7 @@ module.exports = {
         'no-dupe-class-members': 'error',
         'no-duplicate-imports': 'error',
         'no-new-symbol': 'error',
-        'no-restricted-imports': ['off', {paths: [], patterns: []}],
+        'no-restricted-imports': ['error', {paths: [], patterns: []}],
         'no-this-before-super': 'error',
         'no-useless-computed-key': 'error',
         'no-useless-constructor': 'error',
@@ -100,24 +100,23 @@ module.exports = {
             allowNamedFunctions: false,
             allowUnboundThis: true
         }],
-        'prefer-const': ['error', {
+        'prefer-const': ['warn', {
             destructuring: 'any',
             ignoreReadBeforeAssign: true
         }],
-        'prefer-destructuring': ['error', {
+        'prefer-destructuring': ['warn', {
             VariableDeclarator: {
-                array: false,
+                array: true,
                 object: true
             },
             AssignmentExpression: {
-                array: true,
+                array: false,
                 object: false
             }
         }, {
             enforceForRenamedProperties: false
         }],
         'prefer-numeric-literals': 'error',
-        'prefer-reflect': 'off',
         'prefer-rest-params': 'error',
         'prefer-spread': 'error',
         'prefer-template': 'error',
@@ -134,7 +133,7 @@ module.exports = {
         'yield-star-spacing': ['error', 'after'],
 
         // Node
-        'callback-return': 'off',
+        'callback-return': 'warn',
         'global-require': 'error',
         'handle-callback-err': 'off',
         'no-buffer-constructor': 'error',
@@ -142,28 +141,28 @@ module.exports = {
         'no-new-require': 'error',
         'no-path-concat': 'error',
         'no-process-env': 'off',
-        'no-process-exit': 'off',
+        'no-process-exit': 'error',
         'no-restricted-modules': 'off',
-        'no-sync': 'off',
+        'no-sync': 'error',
 
         // Style
         'array-bracket-newline': ['warn', 'consistent'],
         'array-element-newline': ['warn', 'consistent'],
         'array-bracket-spacing': ['warn', 'never'],
         'block-spacing': ['warn', 'always'],
-        'brace-style': ['warn', '1tbs', {allowSingleLine: true}],
-        camelcase: ['warn', {
+        'brace-style': ['warn', '1tbs', {allowSingleLine: false}],
+        camelcase: ['off', { // Babel rule fix
             properties: 'never',
             ignoreDestructuring: false
         }],
         'capitalized-comments': ['warn', 'always', {
             line: {
-                ignorePattern: '',
+                ignorePattern: 'todo',
                 ignoreInlineComments: true,
                 ignoreConsecutiveComments: true
             },
             block: {
-                ignorePattern: '',
+                ignorePattern: 'todo',
                 ignoreInlineComments: true,
                 ignoreConsecutiveComments: true
             }
@@ -198,7 +197,7 @@ module.exports = {
         'consistent-this': 'off',
         'eol-last': ['warn', 'never'],
         'func-call-spacing': ['warn', 'never'],
-        'func-name-matching': ['off', 'always', {
+        'func-name-matching': ['warn', 'always', {
             includeCommonJSModuleExports: false,
             considerPropertyDescriptor: true
         }],
@@ -248,12 +247,12 @@ module.exports = {
             ignorePattern: '',
             position: 'above'
         }],
-        'linebreak-style': ['warn', 'unix'],
+        'linebreak-style': ['off', 'unix'],
         'lines-between-class-members': ['warn', 'always', {exceptAfterSingleLine: false}],
         'lines-around-comment': 'off',
         'lines-around-directive': ['warn', {before: 'always', after: 'always'}],
-        'max-depth': ['off', 4],
-        'max-len': ['warn', 100, 2, {
+        'max-depth': ['warn', 6],
+        'max-len': ['warn', 120, 2, {
             ignoreComments: false,
             ignoreRegExpLiterals: true,
             ignoreStrings: true,
@@ -265,21 +264,21 @@ module.exports = {
             skipBlankLines: true,
             skipComments: true
         }],
-        'max-lines-per-function': ['off', {
+        'max-lines-per-function': ['warn', {
             IIFEs: true,
             max: 30,
             skipBlankLines: true,
             skipComments: true
         }],
-        'max-nested-callbacks': 'off',
-        'max-params': ['off', 3],
+        'max-nested-callbacks': ['warn', 10],
+        'max-params': ['warn', 7],
         'max-statements': ['warn', 20],
         'max-statements-per-line': ['warn', {max: 1}],
         'multiline-comment-style': ['warn', 'starred-block'],
         'multiline-ternary': ['warn', 'always-multiline'],
-        'new-cap': ['error', {
+        'new-cap': ['off', { // Babel rule fix
             capIsNew: false,
-            capIsNewExceptions: ['Immutable.Map', 'Immutable.Set', 'Immutable.List'],
+            capIsNewExceptions: [],
             newIsCap: true,
             newIsCapExceptions: []
         }],
@@ -298,7 +297,7 @@ module.exports = {
         }],
         'no-mixed-spaces-and-tabs': 'warn',
         'no-multi-assign': ['warn'],
-        'no-multiple-empty-lines': ['warn', {max: 2, maxBOF: 0, maxEOF: 0}],
+        'no-multiple-empty-lines': ['warn', {max: 1, maxBOF: 0, maxEOF: 0}],
         'no-negated-condition': 'warn',
         'no-nested-ternary': 'error',
         'no-new-object': 'warn',
@@ -319,44 +318,30 @@ module.exports = {
         'no-spaced-func': 'warn',
         'no-tabs': 'warn',
         'no-ternary': 'off',
-        'no-trailing-spaces': ['warn', {skipBlankLines: false, ignoreComments: false}],
-        'no-underscore-dangle': ['warn', {
+        'no-trailing-spaces': ['warn', {skipBlankLines: true, ignoreComments: false}],
+        'no-underscore-dangle': ['off', {
             allow: [],
-            allowAfterThis: true,
+            allowAfterThis: false,
             allowAfterSuper: false,
             enforceInMethodNames: true
         }],
         'no-unneeded-ternary': ['warn', {defaultAssignment: false}],
         'no-whitespace-before-property': 'warn',
         'nonblock-statement-body-position': ['warn', 'beside', {overrides: {}}],
-        'object-curly-spacing': ['warn', 'never'],
+        'object-curly-spacing': ['off', 'never'], // Babel rule fix
         'object-curly-newline': ['warn', {consistent: true, multiline: true}],
         'object-property-newline': ['warn', {allowAllPropertiesOnSameLine: true}],
-        'one-var': ['warn', 'consecutive'],
+        'one-var': ['warn', {let: 'consecutive'}],
         'one-var-declaration-per-line': ['warn', 'always'],
         'operator-assignment': ['warn', 'always'],
-        'operator-linebreak': ['warn', 'before', {
-            overrides: {
-                '=': 'none'
-            }
-        }],
-        'padded-blocks': ['warn', {
-            blocks: 'never',
-            classes: 'always',
-            switches: 'never'
-        }, {
-            allowSingleLineBlocks: true
-        }],
+        'operator-linebreak': ['warn', 'before', {overrides: {'=': 'none'}}],
+        'padded-blocks': ['warn', {blocks: 'never', classes: 'always', switches: 'never'}, {allowSingleLineBlocks: true}],
         'padding-line-between-statements': 'off',
         'prefer-object-spread': 'warn',
-        'quote-props': ['warn', 'as-needed', {
-            keywords: false,
-            unnecessary: true,
-            numbers: false
-        }],
-        quotes: ['warn', 'single', {avoidEscape: true}],
+        'quote-props': ['warn', 'as-needed', {keywords: false, unnecessary: true, numbers: false}],
+        quotes: ['off', 'single', {avoidEscape: true}],
         'require-jsdoc': 'off',
-        semi: ['error', 'always'],
+        semi: ['off', 'always'], // Babel rule fix
         'semi-spacing': ['warn', {before: false, after: true}],
         'semi-style': ['warn', 'last'],
         'sort-keys': ['off', 'asc', {caseSensitive: false, natural: true}],
@@ -397,10 +382,10 @@ module.exports = {
         'no-use-before-define': ['error', {functions: true, classes: true, variables: true}],
 
         // Best-practices
-        'accessor-pairs': 'off',
+        'accessor-pairs': 'warn',
         'array-callback-return': ['error', {allowImplicit: true}],
         'block-scoped-var': 'error',
-        complexity: ['off', 11],
+        complexity: ['warn', 10],
         'class-methods-use-this': ['warn', {exceptMethods: []}],
         'consistent-return': 'error',
         curly: ['error', 'multi-line'],
@@ -413,11 +398,11 @@ module.exports = {
         'no-alert': 'warn',
         'no-caller': 'error',
         'no-case-declarations': 'error',
-        'no-div-regex': 'off',
+        'no-div-regex': 'warn',
         'no-else-return': ['error', {allowElseIf: false}],
         'no-empty-function': ['error', {allow: ['arrowFunctions', 'functions', 'methods']}],
         'no-empty-pattern': 'error',
-        'no-eq-null': 'off',
+        'no-eq-null': 'error',
         'no-eval': 'error',
         'no-extend-native': 'error',
         'no-extra-bind': 'error',
@@ -425,8 +410,8 @@ module.exports = {
         'no-fallthrough': 'error',
         'no-floating-decimal': 'error',
         'no-global-assign': ['error', {exceptions: []}],
-        'no-native-reassign': 'off',
-        'no-implicit-coercion': ['off', {
+        'no-native-reassign': 'error',
+        'no-implicit-coercion': ['error', {
             boolean: false,
             number: true,
             string: true,
@@ -434,7 +419,7 @@ module.exports = {
         }],
         'no-implicit-globals': 'warn',
         'no-implied-eval': 'error',
-        'no-invalid-this': 'off',
+        'no-invalid-this': 'off', // Babel rule fix
         'no-iterator': 'error',
         'no-labels': ['error', {allowLoop: false, allowSwitch: false}],
         'no-lone-blocks': 'error',
@@ -514,9 +499,13 @@ module.exports = {
         'no-sequences': 'error',
         'no-throw-literal': 'error',
         'no-unmodified-loop-condition': 'off',
-        'no-unused-expressions': ['error', {allowShortCircuit: false, allowTernary: false, allowTaggedTemplates: false}],
+        'no-unused-expressions': ['off', { // Babel rule fix
+            allowShortCircuit: false,
+            allowTernary: false,
+            allowTaggedTemplates: false
+        }],
         'no-unused-labels': 'error',
-        'no-useless-call': 'off',
+        'no-useless-call': 'error',
         'no-useless-catch': 'error',
         'no-useless-concat': 'error',
         'no-useless-escape': 'error',
@@ -526,9 +515,9 @@ module.exports = {
         'no-with': 'error',
         'prefer-promise-reject-errors': ['error', {allowEmptyReject: true}],
         'prefer-named-capture-group': 'off',
-        radix: 'error',
-        'require-await': 'off',
-        'require-unicode-regexp': 'off',
+        radix: ['error', 'as-needed'],
+        'require-await': 'error',
+        'require-unicode-regexp': 'warn',
         'vars-on-top': 'error',
         'wrap-iife': ['error', 'outside', {functionPrototypeMethods: false}],
         yoda: 'error',
@@ -537,10 +526,7 @@ module.exports = {
         'import/default': 'warn',
         'import/dynamic-import-chunkname': ['off', {importFunctions: [], webpackChunknameFormat: '[0-9a-zA-Z-_/.]+'}],
         'import/export': 'error',
-        'import/extensions': ['warn', 'never', {
-            js: 'never',
-            jsx: 'never'
-        }],
+        'import/extensions': ['warn', 'never', {js: 'never', jsx: 'never'}],
         'import/exports-last': 'off',
         'import/first': 'warn',
         'import/group-exports': 'off',
@@ -609,41 +595,36 @@ module.exports = {
         'import/no-useless-path-segments': ['error', {commonjs: true, noUselessIndex: true}],
         'import/no-webpack-loader-syntax': 'error',
         'import/order': ['warn', {
-            alphabetize: {
-                order: 'asc',
-                caseInsensitive: true
-            },
-            groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
-            'newlines-between': 'ignore'
+            alphabetize: {order: 'asc', caseInsensitive: true},
+            groups: ['builtin', 'external', ['internal', 'parent', 'sibling', 'index'], 'object'],
+            'newlines-between': 'always-and-inside-groups'
         }],
         'import/prefer-default-export': 'warn',
         'import/unambiguous': 'off',
 
         // React
         'jsx-quotes': ['warn', 'prefer-double'],
-        'react-hooks/exhaustive-deps': 'warn',
-        'react-hooks/rules-of-hooks': 'error',
-        'react/boolean-prop-naming': 'off',
+        'react/boolean-prop-naming': 'warn',
         'react/button-has-type': 'error',
         'react/default-props-match-prop-types': 'error',
         'react/destructuring-assignment': 'off',
-        'react/display-name': 'off',
-        'react/forbid-component-props': 'error',
+        'react/display-name': 'warn',
+        'react/forbid-component-props': ['error', {forbid: ['style']}],
         'react/forbid-dom-props': 'off',
         'react/forbid-elements': 'off',
-        'react/forbid-foreign-prop-types': 'off',
+        'react/forbid-foreign-prop-types': 'error',
         'react/forbid-prop-types': 'off',
         'react/jsx-boolean-value': ['error', 'never'],
         'react/jsx-child-element-spacing': 'off',
-        'react/jsx-closing-bracket-location': ['warn', 'tag-aligned'],
-        'react/jsx-closing-tag-location': 'warn',
+        'react/jsx-closing-bracket-location': ['warn', 'line-aligned'],
+        'react/jsx-closing-tag-location': 'off',
         'react/jsx-curly-brace-presence': ['warn', 'never'],
         'react/jsx-curly-newline': 'warn',
         'react/jsx-curly-spacing': ['warn', 'never', {allowMultiline: true}],
         'react/jsx-equals-spacing': ['warn', 'never'],
         'react/jsx-first-prop-new-line': ['warn', 'multiline-multiprop'],
         'react/jsx-fragments': ['error', 'syntax'],
-        'react/jsx-handler-names': ['error', {eventHandlerPrefix: 'handle', eventHandlerPropPrefix: 'on'}],
+        'react/jsx-handler-names': ['error', {eventHandlerPrefix: false, eventHandlerPropPrefix: 'on'}],
         'react/jsx-indent-props': ['warn', 4],
         'react/jsx-indent': ['warn', 4],
         'react/jsx-key': 'error',
@@ -654,16 +635,29 @@ module.exports = {
         'react/jsx-no-literals': 'off',
         'react/jsx-no-target-blank': 'error',
         'react/jsx-no-undef': 'error',
-        'react/jsx-one-expression-per-line': 'off',
+        'react/jsx-one-expression-per-line': ['error', {allow: 'single-child'}],
         'react/jsx-pascal-case': 'error',
         'react/jsx-props-no-multi-spaces': 'warn',
         'react/jsx-props-no-spreading': 'off',
         'react/jsx-sort-default-props': ['warn', {ignoreCase: true}],
         'react/jsx-sort-props': 'warn',
-        'react/jsx-tag-spacing': ['warn', {afterOpening: 'never', beforeClosing: 'never', beforeSelfClosing: 'always', closingSlash: 'never'}],
+        'react/jsx-tag-spacing': ['warn', {
+            afterOpening: 'never',
+            beforeClosing: 'never',
+            beforeSelfClosing: 'always',
+            closingSlash: 'never'
+        }],
         'react/jsx-uses-react': 'warn',
         'react/jsx-uses-vars': 'warn',
-        'react/jsx-wrap-multilines': 'off',
+        'react/jsx-wrap-multilines': ['warn', {
+            declaration: 'parens-new-line',
+            assignment: 'parens-new-line',
+            return: 'parens-new-line',
+            arrow: 'ignore',
+            condition: 'ignore',
+            logical: 'ignore',
+            prop: 'ignore'
+        }],
         'react/no-access-state-in-setstate': 'error',
         'react/no-array-index-key': 'error',
         'react/no-children-prop': 'error',
@@ -696,20 +690,20 @@ module.exports = {
         'react/require-render-return': 'error',
         'react/self-closing-comp': 'error',
         'react/sort-comp': ['warn', {
-            order: [
-                'static-variables',
-                'static-methods',
-                'instance-variables',
-                'lifecycle',
-                'everything-else',
-                'render'
-            ]
+            order: ['static-variables', 'static-methods', 'instance-variables', 'lifecycle', 'everything-else', 'render']
         }],
         'react/sort-prop-types': ['warn', {ignoreCase: true, requiredFirst: false}],
         'react/state-in-constructor': ['error', 'never'],
-        'react/static-property-placement': 'error',
+        'react/static-property-placement': ['warn', 'static public field', {
+            defaultProps: 'property assignment',
+            propTypes: 'property assignment'
+        }],
         'react/style-prop-object': 'error',
         'react/void-dom-elements-no-children': 'error',
+
+        // React-hooks
+        'react-hooks/exhaustive-deps': 'warn',
+        'react-hooks/rules-of-hooks': 'error',
 
         // type script
         "@typescript-eslint/no-extra-parens": ['warn', 'all', {

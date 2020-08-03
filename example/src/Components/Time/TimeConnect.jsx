@@ -3,12 +3,13 @@ import React from 'react';
 
 import TimeContext from '../../Contexts/TimeContext';
 
-const second = 1000,
-      TimeConnect = ({timeFromMount}) => (
-          <div className="dark">
-              {`TimeConnect -  time from mount ${Math.floor(timeFromMount / second)}sec`}
-          </div>
-      );
+const second = 1000;
+
+const TimeConnect = ({timeFromMount}) =>
+    <div className="dark">
+        {`TimeConnect -  time from mount ${Math.floor(timeFromMount / second)}sec`}
+    </div>;
+
 TimeConnect.propTypes = {
     timeFromMount: PropTypes.number.isRequired
 };

@@ -8,15 +8,15 @@ import IrrelevantUseContext from './Irrelevant/IrrelevantUseContext';
 
 class TestRerenderContext extends Component {
 
-    state ={themeProp: 'dark', irrelevant: 'a'}
+    state = {themeProp: 'dark', irrelevant: 'a'};
 
     toggleTheme = () => {
         this.setState(state => (state.themeProp === 'dark' ? {themeProp: 'light'} : {themeProp: 'dark'}));
-    }
+    };
 
     toggleIrrelevant = () => {
         this.setState(state => (state.irrelevant === 'a' ? {irrelevant: 'b'} : {irrelevant: 'a'}));
-    }
+    };
 
     render() {
         const {themeProp} = this.state;
@@ -24,10 +24,13 @@ class TestRerenderContext extends Component {
         return (
             <IrrelevantContext>
                 <div className="list">
-                    TestRerenderContext - test context consumers memorization:<br />
-                    context.connect is defaulted to memo and will not rerender on irrelevant changes<br />
-                    context.connect with options &#123;memo: false&#125; will rerender always<br />
-                    react.memo(UseContext) prop change will not rerender, context change  will rerender
+                    TestRerenderContext - test context consumers memorization:
+                    <br />
+                    context.connect is defaulted to memo and will not re-render on irrelevant changes
+                    <br />
+                    context.connect with options &#123;memo: false&#125; will re-render always
+                    <br />
+                    react.memo(UseContext) prop change will not re-render, context change will re-render
                     <div>
                         <Button
                             handelClick={this.toggleTheme}

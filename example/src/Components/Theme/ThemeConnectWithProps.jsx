@@ -4,13 +4,12 @@ import React from 'react';
 import ThemeContext from '../../Contexts/ThemeContext';
 import Button from '../Generic/Button';
 
-const ThemeConnectWithProps = ({contextTheme, theme, toggleTheme}) => (
+const ThemeConnectWithProps = ({contextTheme, theme, toggleTheme}) =>
     <div className={theme}>
         ThemeConnectWithProps
         <p>{`context theme: ${contextTheme}`}</p>
         <Button handelClick={toggleTheme} text="toggle context theme" />
-    </div>
-);
+    </div>;
 ThemeConnectWithProps.propTypes = {
     contextTheme: PropTypes.string.isRequired,
     theme: PropTypes.string.isRequired,

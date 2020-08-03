@@ -4,14 +4,13 @@ import React from 'react';
 import CounterContext from '../../Contexts/CounterContext';
 import Button from '../Generic/Button';
 
-const CounterConnect = ({counter, decrease, increase}) => (
+const CounterConnect = ({counter, decrease, increase}) =>
     <div className="dark">
         CounterConnect
         <div className="value">{`value: ${counter}`}</div>
         <Button handelClick={increase} text="increase" />
         <Button handelClick={decrease} text="decrease" />
-    </div>
-);
+    </div>;
 CounterConnect.propTypes = {
     counter: PropTypes.number.isRequired,
     decrease: PropTypes.func.isRequired,

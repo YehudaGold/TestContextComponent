@@ -9,8 +9,10 @@ const TestExtendCounterContext = () =>
     <CounterContext>
         <ExtendCounterContext>
             <div className="list">
-                TestExtendCounterContext - test contextComponent of inherent class:<br />
-                inherent class have all actions automatically<br />
+                TestExtendCounterContext - test contextComponent of inherent class:
+                <br />
+                inherent class have all actions automatically
+                <br />
                 inherent class have different context object from base class
                 <ExtendCounterConnect />
                 <CounterConnect />

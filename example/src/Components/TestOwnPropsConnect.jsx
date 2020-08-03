@@ -14,7 +14,8 @@ const TestOwnPropsConnect = () => {
     return (
         <ThemeContext>
             <div className="list">
-                TestOwnPropsConnect - test connect with callback (context, ownProp) =&gt; Object:<br />
+                TestOwnPropsConnect - test connect with callback (context, ownProp) =&gt; Object:
+                <br />
                 check theme dark only if both context theme and component theme prop dark
                 <div>
                     {`theme prop: ${themeProp}`}

@@ -6,15 +6,14 @@ import CounterContext from '../../Contexts/CounterContext';
 import ThemeContext from '../../Contexts/ThemeContext';
 import Button from '../Generic/Button';
 
-const MultipleConnect = ({counter, decrease, increase, theme, toggleTheme}) => (
+const MultipleConnect = ({counter, decrease, increase, theme, toggleTheme}) =>
     <div className={theme}>
         MultipleConnect
         <div className="value">{`value: ${counter}`}</div>
         <Button handelClick={increase} text="increase" />
         <Button handelClick={decrease} text="decrease" />
         <Button handelClick={toggleTheme} text="toggle theme" />
-    </div>
-);
+    </div>;
 MultipleConnect.propTypes = {
     counter: PropTypes.number.isRequired,
     decrease: PropTypes.func.isRequired,

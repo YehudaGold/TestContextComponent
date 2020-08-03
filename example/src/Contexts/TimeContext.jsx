@@ -4,7 +4,7 @@ const second = 1000;
 
 export default class TimeContext extends ContextComponent {
 
-    state = {timeFromMount: 0}
+    state = {timeFromMount: 0};
 
     componentDidMount() {
         this.mountTime = Date.now();
@@ -20,6 +20,6 @@ export default class TimeContext extends ContextComponent {
 
     _tick = () => {
         this.setState({timeFromMount: Date.now() - this.mountTime});
-    }
+    };
 
 }

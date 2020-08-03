@@ -1,10 +1,11 @@
 # IDE config
-/.ide
-/.vscode
+.idea/
+.vscode/
 
 # development
-/src
-/example
+src/
+example/
+
 .babelrc
 .eslintrc.js
 .gitignore

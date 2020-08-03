@@ -6,16 +6,14 @@ import Button from '../Generic/Button';
 
 let renderCount = 0;
 
-const IrrelevantConnect = ({toggleIrrelevant, toggleTheme, theme, themeProp}) => (
+const IrrelevantConnect = ({toggleIrrelevant, toggleTheme, theme, themeProp}) =>
     <div className={theme}>
         IrrelevantConnect
         <div>{`renderCount: ${++renderCount}`}</div>
         <div>{`theme prop: ${themeProp}`}</div>
         <Button handelClick={toggleTheme} text="toggle theme" />
         <Button handelClick={toggleIrrelevant} text="toggle irrelevant" />
-    </div>
-);
-
+    </div>;
 IrrelevantConnect.propTypes = {
     theme: PropTypes.string.isRequired,
     themeProp: PropTypes.string.isRequired,

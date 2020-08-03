@@ -6,12 +6,9 @@ import Button from '../Generic/Button';
 
 class ThemeConnectForwardRef extends Component {
 
-    static propTypes = {
-        theme: PropTypes.string.isRequired,
-        toggleTheme: PropTypes.func.isRequired
-    }
-
-    toggleTheme = () => { this.props.toggleTheme(); }
+    toggleTheme = () => {
+        this.props.toggleTheme();
+    };
 
     render() {
         const {toggleTheme, theme} = this.props;
@@ -25,6 +22,10 @@ class ThemeConnectForwardRef extends Component {
     }
 
 }
+ThemeConnectForwardRef.propTypes = {
+    theme: PropTypes.string.isRequired,
+    toggleTheme: PropTypes.func.isRequired
+};
 
 const mapContextToProps = context => ({
     theme: context.theme,
