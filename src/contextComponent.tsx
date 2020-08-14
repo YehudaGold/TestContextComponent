@@ -11,10 +11,17 @@ type ComponentContext<Props, State> = Context<ContextValue<Props, State>>;
 
 export type ContextComponentClass<Props, State> = ComponentClass<Props, State>;
 
+/**
+ * Extend `ContextComponent` with state and methods you want to share in your app.
+ * `ContextComponent` implements for you a `render` method that renders the `this.componentContext.Provider`
+ * with the component state and instance methods as value.
+ * Render the extended component to provide the context to the React tree.
+ */
 class ContextComponent<Props, State> extends Component<Props, State> {
 
     static _componentContext: ComponentContext<any, any>;
 
+    /** Returns the `componentContext` context. */
     static get componentContext(): ComponentContext<any, any> {
         if (Object.prototype.hasOwnProperty.call(this, '_componentContext')) return this._componentContext;
 
@@ -24,10 +31,14 @@ class ContextComponent<Props, State> extends Component<Props, State> {
         return this._componentContext;
     }
 
-    static get Consumer(): Consumer<any> { return this.componentContext.Consumer; }
+    /** Returns the `componentContext` context Consumer. */
+    static get Consumer(): Consumer<any> {
+        return this.componentContext.Consumer;
+    }
 
+    /** HOC to consume and transform the `ContextComponent` context to props. */
     static connect<Props, State, ReturnsProps, ConnectProps>(
-        WrappedComponent: ComponentType,
+        WrappedComponent: ComponentType<ConnectProps>,
         mapContextToProps: (context: ContextComponent<Props, State>, ownProps: ConnectProps) => ReturnsProps,
         options: ConnectOptions<Props>
     ): ReactNode {
