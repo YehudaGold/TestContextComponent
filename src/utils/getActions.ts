@@ -1,25 +1,31 @@
-import {getAllMethodNames, Constructor} from './generics';
+import {getAllMethodNames} from './generics';
 
 const reactLifecycleMethods = [
+    'componentDidCatch',
     'componentDidMount',
-    'shouldComponentUpdate',
-    'render',
-    'getSnapshotBeforeUpdate',
     'componentDidUpdate',
     'componentWillUnmount',
-    'componentDidCatch'
+    'getSnapshotBeforeUpdate',
+    'render',
+    'shouldComponentUpdate'
 ];
 
-/** Return partial of `componentInstance`  with all method's except for React lifecycle method's and method's starting with '_'. */
-export default <T extends object>(componentInstance: T, BaseClass?: Constructor): Partial<T> => {
+/**
+ * Collecting all method from the `componentInstance` prototype,
+ * except for React lifecycle methods and methods starting with '_',
+ * stopping on `BaseClass0` prototype if exist.
+ */
+const getActions = <T extends object>(componentInstance: T, BaseClass?: ObjectConstructor): Partial<T> => {
     const actions: Partial<T> = {};
 
     getAllMethodNames(componentInstance, BaseClass)
         .filter(componentMethodNames => !reactLifecycleMethods.includes(componentMethodNames as string))
-        .filter(componentMethodNames => !(componentMethodNames as string).startsWith('_'))
+        .filter(componentMethodNames => !componentMethodNames.toString().startsWith('_'))
         .forEach(contextActionNames => {
             actions[contextActionNames] = componentInstance[contextActionNames];
         });
 
     return actions;
 };
+
+export default getActions;

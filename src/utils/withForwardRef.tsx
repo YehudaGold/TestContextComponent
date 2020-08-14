@@ -1,13 +1,21 @@
-import React, {forwardRef, ForwardRefRenderFunction, FunctionComponent, ComponentType, ForwardRefExoticComponent, PropsWithoutRef, RefAttributes} from 'react';
+import PropTypes from 'prop-types';
+import React, {ComponentType, forwardRef, Ref, PropsWithoutRef, RefAttributes} from 'react';
 
-const withForwardRef = <RefType extends FunctionComponent, Props>(
-    WrappedComponent: ComponentType<Props>
-): ForwardRefExoticComponent<PropsWithoutRef<Props> & RefAttributes<RefType>> => {
-    const ForwardRef: ForwardRefRenderFunction<RefType, Props> = (props, ref) =>
+/** `propType` for ref of react element */
+export const ElementRefPropType = PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({current: PropTypes.elementType})
+]);
+
+export type PropsWithRef<Props> = PropsWithoutRef<Props> & RefAttributes<ComponentType<Props>>;
+
+/** Wraps the `WrappedComponent` with `React.forwardRef` and provide `forwardedRef` prop. */
+const withForwardRef = <Props, >(WrappedComponent: ComponentType<Props>): ComponentType<PropsWithRef<Props>> => {
+    const ForwardRefComponent = (props: Props, ref: Ref<ComponentType<Props>>) =>
         <WrappedComponent {...props} forwardedRef={ref} />;
-    ForwardRef.displayName = WrappedComponent.displayName;
+    ForwardRefComponent.displayName = WrappedComponent.displayName;
 
-    return forwardRef<RefType, Props>(ForwardRef);
+    return forwardRef(ForwardRefComponent);
 };
 
 export default withForwardRef;
