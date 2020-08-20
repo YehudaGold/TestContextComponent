@@ -13,9 +13,9 @@ const reactLifecycleMethods = [
 /**
  * Collecting all method from the `componentInstance` prototype,
  * except for React lifecycle methods and methods starting with '_',
- * stopping on `BaseClass0` prototype if exist.
+ * stopping on `BaseClass` prototype if exist.
  */
-const getActions = <T extends object>(componentInstance: T, BaseClass?: ObjectConstructor): Partial<T> => {
+const getActions = <T extends object>(componentInstance: T, BaseClass?: object['constructor']): Partial<T> => {
     const actions: Partial<T> = {};
 
     getAllMethodNames(componentInstance, BaseClass)

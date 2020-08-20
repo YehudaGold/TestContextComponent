@@ -8,7 +8,7 @@ const hasMethod = (target: object, key: PropertyKey): boolean => {
 };
 
 /** Collecting all method names from the `target` prototype, stopping on `BaseClass` prototype if exist */
-export const getAllMethodNames = <T extends object>(target: T, BaseClass?: ObjectConstructor): Array<keyof T> => {
+export const getAllMethodNames = <T extends object>(target: T, BaseClass?: object['constructor']): Array<keyof T> => {
     const uniqMethodNames = new Set<keyof T>(),
           BaseProto = BaseClass ? BaseClass.prototype : null;
 
@@ -28,5 +28,5 @@ export const getAllMethodNames = <T extends object>(target: T, BaseClass?: Objec
  * Get component displayName.
  * [react-docs:higher-order-components](https://reactjs.org/docs/higher-order-components.html#convention-wrap-the-display-name-for-easy-debugging)
  */
-export const getDisplayName = (Component: ComponentType<unknown>): string =>
+export const getDisplayName = <Props>(Component: ComponentType<Props>): string =>
     Component.displayName || Component.name || 'Component';

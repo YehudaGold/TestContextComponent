@@ -1,4 +1,5 @@
 // Run 'npm i -g eslint eslint-plugin-import eslint-plugin-react eslint-plugin-react-hooks  @typescript-eslint/parser @typescript-eslint/eslint-plugin'
+/* eslint-disable max-lines */
 module.exports = {
     env: {
         node: true,
@@ -72,7 +73,7 @@ module.exports = {
 
         // Es6
         'arrow-body-style': ['error', 'as-needed', {requireReturnForObjectLiteral: false}],
-        'arrow-parens': ['warn', 'as-needed' /** , {requireForBlockBody: true} https://github.com/typescript-eslint/typescript-eslint/issues/14 **/ ],
+        'arrow-parens': ['warn', 'as-needed'],
         'arrow-spacing': ['error', {before: true, after: true}],
         'constructor-super': 'error',
         'generator-star-spacing': ['error', {before: false, after: true}],
@@ -588,7 +589,7 @@ module.exports = {
         'import/no-unassigned-import': 'off',
         'import/no-unused-modules': ['warn', {
             missingExports: false,
-            // ignoreExports: ['src'],
+            // IgnoreExports: ['src'],
             unusedExports: true
         }],
         'import/no-unresolved': ['error', {commonjs: true, caseSensitive: true}],
@@ -705,12 +706,16 @@ module.exports = {
         'react-hooks/exhaustive-deps': 'warn',
         'react-hooks/rules-of-hooks': 'error',
 
-        // type script
+        // Type script
         "@typescript-eslint/no-extra-parens": ['warn', 'all', {
             conditionalAssign: true,
             nestedBinaryExpressions: false,
             ignoreJSX: 'all',
             enforceForArrowConditionals: false
+        }],
+        "@typescript-eslint/ban-types": ["error", {
+            extendDefaults: true,
+            types: {object: false }
         }]
     }
 };
