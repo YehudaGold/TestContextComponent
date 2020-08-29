@@ -1,12 +1,19 @@
-import {PropsWithChildren, ComponentType, Context} from 'react';
+import {ComponentType, Context, ForwardRefExoticComponent, MemoExoticComponent} from 'react';
 
-type IsEqual<PropsWithChildren> = (prevProps: PropsWithChildren, nextProps: PropsWithChildren) => boolean;
+type IsEqual<Props> = (prevProps: Props, nextProps: Props) => boolean;
 
 type ConnectOptions<Props> = {
     forwardRef?: boolean;
-    memo?: boolean | IsEqual<PropsWithChildren<Props>>;
+    memo?: boolean | IsEqual<Props>;
 };
 
 type ContextComponentType<Props> = ComponentType<Props> & { _componentContext: Context<Props> };
 
-export {ConnectOptions, ContextComponentType, IsEqual};
+type ComponentOrMemo<Props> = ComponentType<Props> | MemoExoticComponent<ComponentType<Props>>;
+
+type ReactNodeType<Props> =
+    ComponentType<Props>
+    | MemoExoticComponent<ComponentType<Props>>
+    | ForwardRefExoticComponent<Props>;
+
+export {ComponentOrMemo, ConnectOptions, ContextComponentType, IsEqual, ReactNodeType};
