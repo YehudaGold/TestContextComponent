@@ -1,57 +1,59 @@
-import PropTypes from 'prop-types';
-import React, {useContext, memo, ComponentType, Ref, ReactNode, MemoExoticComponent, Context} from 'react';
+import PropTypes, {Validator} from 'prop-types';
+import React, {useContext, memo, ComponentType, MemoExoticComponent, FunctionComponent} from 'react';
 
 import ContextComponent from './contextComponent';
-import {ConnectOptions} from './types';
+import type {CCInternalProps, ConnectOptions, ContextValue, ForwardRefComponentType, OwnProps, WrappedComponentProps} from './types';
 import {getDisplayName} from './utils/generics';
-import withForwardRef, {PropsWithRef, ElementRefPropType} from './utils/withForwardRef';
+import withForwardRef, {ElementRefPropType} from './utils/withForwardRef';
 
-type Actions<Props, State> = Partial<ContextComponent<Props, State>>;
-type ContextValue<Props, State> = Actions<Props, State> & State | undefined;
-type ComponentContext<Props, State> = Context<ContextValue<Props, State>>;
+type MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps> =
+    (context: ContextValue<CCProps, CCState>[], ownProps: OwnProps<ConnectProps>) => ReturnsProps;
 
-type ComponentOrMemo<ownProps> = ComponentType<ownProps> | MemoExoticComponent<ComponentType<ownProps>>;
-type ComponentOrRef<Props> =
-    ComponentType<Props> | (ComponentType<PropsWithRef<Props>>);
+type ComponentOrMemo<Props> = ComponentType<Props> | MemoExoticComponent<ComponentType<Props>>;
+type ComponentOrRef<Props> = ComponentType<Props> | ForwardRefComponentType<Props>;
 
-function s<Props, State, ReturnsProps, ownProps>(
-    ContextComponents: (typeof ContextComponent)[],
-    WrappedComponent: ComponentOrMemo<ownProps>,
-    mapContextsToProps: (context: ContextValue<Props, State>[], ownProps: ownProps) => ReturnsProps,
+const consumeContexts = <CCProps, CCState, ConnectProps, ReturnsProps>(
+    WrappedComponent: ComponentOrMemo<WrappedComponentProps<ConnectProps, ReturnsProps>>,
+    mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps>,
     wrappedComponentName: string
-): ComponentOrRef<ownProps> {
-    return ContextComponents.reduceRight<ContextComponent<Props, State>>(
-        (PreviousComponent: ComponentContext<Props, State>, ContextComponent: typeof ContextComponent, index: number) => {
-            const ConsumeContext = (
-                {contexts = [], forwardedRef, ...props }: { contexts: Array<ContextValue<Props, State>>; forwardedRef?: Ref<Props>; } & ownProps
-            ): ReactNode => {
-                contexts[index] = useContext(ContextComponent.componentContext);
+) =>
+    (
+        PreviousComponent: ComponentType<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> | null,
+        contextComponent: typeof ContextComponent,
+        index: number
+    ): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> => {
+        const ConsumeComponent: FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> = (
+            props: ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>
+        ) => {
+            const {contexts = [], forwardedRef, ...ownProps} = props;
 
-                if (PreviousComponent) {
-                    return <PreviousComponent {...props} contexts={contexts} forwardedRef={forwardedRef} />;
-                }
+            contexts[index] = useContext(contextComponent.componentContext);
 
-                return <WrappedComponent {...props} {...mapContextsToProps(contexts, props)} ref={forwardedRef} />;
-            };
-            ConsumeContext.displayName = `connect[${getDisplayName(ContextComponent)}](${wrappedComponentName})`;
-            ConsumeContext.propTypes = {contexts: PropTypes.array, forwardedRef: ElementRefPropType};
+            if (PreviousComponent) {
+                return <PreviousComponent {...props} />;
+            }
 
-            return ConsumeContext;
-        },
-        null
-    );
-}
+            return <WrappedComponent {...ownProps} {...mapContextsToProps(contexts, ownProps)} ref={forwardedRef} />;
+        };
+        ConsumeComponent.displayName = `connect[${getDisplayName(contextComponent)}](${wrappedComponentName})`;
+        ConsumeComponent.propTypes = {
+            contexts: PropTypes.arrayOf(PropTypes.object as Validator<ContextValue<CCProps, CCState>>),
+            forwardedRef: ElementRefPropType
+        };
+
+        return ConsumeComponent;
+    };
 
 /** HOC to consume and transform `ContextComponents[]` contexts to props. */
-const connect = <Props, State, ReturnsProps, ownProps>(
-    WrappedComponent: ComponentType<ownProps>,
+const connect = <CCProps, CCState, ReturnsProps, ConnectProps>(
+    WrappedComponent: ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>,
     ContextComponents: Array<typeof ContextComponent>,
-    mapContextsToProps: (context: Array<ContextValue<Props, State>>, ownProps: ownProps) => ReturnsProps,
-    options: ConnectOptions<ownProps>
-): ComponentOrRef<Props> => {
+    mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps>,
+    options: ConnectOptions<WrappedComponentProps<ConnectProps, ReturnsProps>>
+): ComponentOrRef<ConnectProps> | null => {
     const wrappedComponentName = getDisplayName(WrappedComponent); // Cached before memo
 
-    let ComputedWrappedComponent: ComponentOrMemo<ownProps> = WrappedComponent;
+    let ComputedWrappedComponent: ComponentOrMemo<WrappedComponentProps<ConnectProps, ReturnsProps>> = WrappedComponent;
 
     if (typeof options.memo === 'function') {
         ComputedWrappedComponent = memo(WrappedComponent, options.memo);
@@ -59,14 +61,12 @@ const connect = <Props, State, ReturnsProps, ownProps>(
         ComputedWrappedComponent = memo(WrappedComponent);
     }
 
-    let ConnectComponent = s<Props, State, ReturnsProps, ownProps>(
-        ContextComponents,
-        ComputedWrappedComponent,
-        mapContextsToProps,
-        wrappedComponentName
-    );
+    const ConnectComponent = ContextComponents.reduceRight(
+        consumeContexts(ComputedWrappedComponent, mapContextsToProps, wrappedComponentName),
+        null
+    )
 
-    if (options.forwardRef) ConnectComponent = withForwardRef(ConnectComponent);
+    if (options.forwardRef && ConnectComponent) return withForwardRef(ConnectComponent);
 
     return ConnectComponent;
 };

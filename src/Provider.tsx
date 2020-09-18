@@ -1,8 +1,6 @@
 import PropTypes from 'prop-types';
 import React, {ReactNode, PropsWithChildren, ComponentClass} from 'react';
 
-import { ContextComponentClass } from './contextComponent';
-
 type ProvidedComponent = ComponentClass<PropsWithChildren<unknown>>;
 type ProviderProps = PropsWithChildren<{ContextComponents: Array<ProvidedComponent>}>;
 

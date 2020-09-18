@@ -1,15 +1,13 @@
-import React, {Component, Context, ComponentType, Consumer, ComponentClass, ReactNode} from 'react';
+import React, {Component, Context, ComponentType, Consumer, ReactNode} from 'react';
 
 import connect from './connect';
-import {ConnectOptions} from './types';
+import {ConnectOptions, OwnProps, WrappedComponentProps} from './types';
 import {getDisplayName} from './utils/generics';
 import getActions from './utils/getActions';
 
-type Actions<Props, State> = Partial<ContextComponent<Props, State>>;
-type ContextValue<Props, State> = Actions<Props, State> & State | undefined;
-type ComponentContext<Props, State> = Context<ContextValue<Props, State>>;
-
-export type ContextComponentClass<Props, State> = ComponentClass<Props, State>;
+type Actions<CCProps, CCState> = Partial<ContextComponent<CCProps, CCState>>;
+type ContextValue<CCProps, CCState> = Actions<CCProps, CCState> & CCState | undefined;
+type ComponentContext<CCProps, CCState> = Context<ContextValue<CCProps, CCState>>;
 
 /**
  * Extend `ContextComponent` with state and methods you want to share in your app.
@@ -17,7 +15,7 @@ export type ContextComponentClass<Props, State> = ComponentClass<Props, State>;
  * with the component state and instance methods as value.
  * Render the extended component to provide the context to the React tree.
  */
-class ContextComponent<Props, State> extends Component<Props, State> {
+class ContextComponent<CCProps, CCState> extends Component<CCProps, CCState> {
 
     static _componentContext: ComponentContext<any, any>;
 
@@ -37,33 +35,33 @@ class ContextComponent<Props, State> extends Component<Props, State> {
     }
 
     /** HOC to consume and transform the `ContextComponent` context to props. */
-    static connect<Props, State, ReturnsProps, ConnectProps>(
-        WrappedComponent: ComponentType<ConnectProps>,
-        mapContextToProps: (context: ContextComponent<Props, State>, ownProps: ConnectProps) => ReturnsProps,
-        options: ConnectOptions<Props>
+    static connect<CCProps, CCState, ReturnsProps, ConnectProps>(
+        WrappedComponent: ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>,
+        mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: OwnProps<ConnectProps>) => ReturnsProps,
+        options: ConnectOptions<WrappedComponentProps<ConnectProps, ReturnsProps>>
     ): ReactNode {
-        return connect<Props, State, ReturnsProps, ConnectProps>(
+        return connect<CCProps, CCState, ReturnsProps, ConnectProps>(
             WrappedComponent,
             [this],
-            mapContextToProps && (([context]: Array<ContextComponent<Props, State>>, ownProps: ConnectProps): ReturnsProps => mapContextToProps(context, ownProps)),
+            ([context], ownProps) => mapContextToProps(context, ownProps),
             options
         );
     }
 
-    componentContext: ComponentContext<Props, State>;
+    actions?: Actions<CCProps, CCState>;
 
-    lastState?: State;
+    componentContext: ComponentContext<CCProps, CCState>;
 
-    actions?: Actions<Props, State>;
+    contextValue: ContextValue<CCProps, CCState> = { ...this.state};
 
-    contextValue: ContextValue<Props, State> = {...this.actions, ...this.state};
+    lastState?: CCState;
 
-    constructor(props: Readonly<Props>) {
+    constructor(props: Readonly<CCProps>) {
         super(props);
         this.componentContext = (this.constructor as typeof ContextComponent).componentContext;
     }
 
-    render(): JSX.Element {
+    render(): ReactNode {
         const {componentContext: {Provider}, props: {children}} = this;
 
         if (this.state !== this.lastState) {

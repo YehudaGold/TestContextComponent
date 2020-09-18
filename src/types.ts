@@ -1,19 +1,27 @@
-import {ComponentType, Context, ForwardRefExoticComponent, MemoExoticComponent} from 'react';
+import type {ComponentType, Context, ForwardRefExoticComponent, MemoExoticComponent, PropsWithChildren, PropsWithoutRef, Ref, RefAttributes} from 'react';
 
-type IsEqual<Props> = (prevProps: Props, nextProps: Props) => boolean;
+import type ContextComponent from './contextComponent';
 
-type ConnectOptions<Props> = {
+export type IsEqual<Props> = (prevProps: Readonly<Props>, nextProps: Readonly<Props>) => boolean;
+
+export type ConnectOptions<Props> = {
     forwardRef?: boolean;
     memo?: boolean | IsEqual<Props>;
 };
 
-type ContextComponentType<Props> = ComponentType<Props> & { _componentContext: Context<Props> };
+export type ContextComponentType<Props> = ComponentType<Props> & { _componentContext: Context<Props> };
 
-type ComponentOrMemo<Props> = ComponentType<Props> | MemoExoticComponent<ComponentType<Props>>;
+export type ComponentOrMemo<Props> = ComponentType<Props> | MemoExoticComponent<ComponentType<Props>>;
 
-type ReactNodeType<Props> =
-    ComponentType<Props>
-    | MemoExoticComponent<ComponentType<Props>>
-    | ForwardRefExoticComponent<Props>;
+type WithRefToComponentOrMemo<Props> = PropsWithoutRef<Props> & RefAttributes<ComponentOrMemo<Props>>
+export type ForwardRefComponentType<Props> = ForwardRefExoticComponent<WithRefToComponentOrMemo<Props>>;
 
-export {ComponentOrMemo, ConnectOptions, ContextComponentType, IsEqual, ReactNodeType};
+export type Actions<CCProps, CCState> = Partial<ContextComponent<CCProps, CCState>>;
+export type ContextValue<CCProps, CCState> = Actions<CCProps, CCState> & CCState | undefined;
+
+export type CCInternalProps<CCProps = unknown, CCState = unknown, ReturnsProps = unknown> = {
+    contexts?: ContextValue<CCProps, CCState>[],
+    forwardedRef?: Ref<PropsWithChildren<CCProps & ReturnsProps>>
+};
+export type OwnProps<ConnectProps> = Omit<ConnectProps, keyof CCInternalProps>;
+export type WrappedComponentProps<ConnectProps, ReturnsProps> = OwnProps<ConnectProps> & ReturnsProps;
