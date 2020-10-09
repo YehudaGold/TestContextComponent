@@ -25,3 +25,8 @@ export type CCInternalProps<CCProps = unknown, CCState = unknown, ReturnsProps =
 };
 export type OwnProps<ConnectProps> = Omit<ConnectProps, keyof CCInternalProps>;
 export type WrappedComponentProps<ConnectProps, ReturnsProps> = OwnProps<ConnectProps> & ReturnsProps;
+
+export type MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps> =
+    (context: ContextValue<CCProps, CCState>[], ownProps: OwnProps<ConnectProps>) => ReturnsProps;
+
+export type ComponentOrRef<Props> = ComponentType<Props> | ForwardRefComponentType<Props>;

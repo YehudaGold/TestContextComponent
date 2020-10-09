@@ -1,8 +1,8 @@
-import {ComponentType} from 'react';
+import type {ComponentType} from 'react';
 
 /** Check if there `methodName` on the `target` without running get properties */
-const hasMethod = (target: object, key: PropertyKey): boolean => {
-    const descriptor = Object.getOwnPropertyDescriptor(target, key);
+export const hasMethod = (target: object, methodName: PropertyKey): boolean => {
+    const descriptor = Object.getOwnPropertyDescriptor(target, methodName);
 
     return !!descriptor && typeof descriptor.value === 'function';
 };

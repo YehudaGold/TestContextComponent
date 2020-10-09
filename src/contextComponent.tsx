@@ -38,7 +38,7 @@ class ContextComponent<CCProps, CCState> extends Component<CCProps, CCState> {
     static connect<CCProps, CCState, ReturnsProps, ConnectProps>(
         WrappedComponent: ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>,
         mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: OwnProps<ConnectProps>) => ReturnsProps,
-        options: ConnectOptions<WrappedComponentProps<ConnectProps, ReturnsProps>>
+        options: ConnectOptions<WrappedComponentProps<ConnectProps, ReturnsProps>> = {}
     ): ReactNode {
         return connect<CCProps, CCState, ReturnsProps, ConnectProps>(
             WrappedComponent,
