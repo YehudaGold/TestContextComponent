@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import React, {useContext, memo, ComponentType, FunctionComponent} from 'react';
 
 import ContextComponent from './contextComponent';
@@ -10,15 +11,15 @@ const consumeComponent = <CCProps, CCState, ConnectProps, ReturnsProps>(
     wrappedComponentName: string,
     mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps>,
     ContextComponents: Array<typeof ContextComponent>,
-    index: number
+    index: number,
+    PreviousComponent?: FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>>
 ): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> => {
     const ConsumeComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>) => {
         const {contexts = [], forwardedRef, ...ownProps} = props;
-
         contexts[index] = useContext(ContextComponents[index].componentContext);
 
-        if (index !== ContextComponents.length - 1) {
-            return <ConsumeComponent {...props} />;
+        if (PreviousComponent) {
+            return <PreviousComponent {...props} contexts={contexts} forwardedRef={forwardedRef} />;
         }
 
         return <WrappedComponent {...ownProps} {...mapContextsToProps(contexts, ownProps)} ref={forwardedRef} />;
@@ -38,27 +39,30 @@ const connect = <CCProps, CCState, ReturnsProps, ConnectProps>(
     const wrappedComponentName = getDisplayName(WrappedComponent); // Cached before memo
 
     let ComputedWrappedComponent = WrappedComponent;
-
     if (typeof options.memo === 'function') {
         ComputedWrappedComponent = memo(WrappedComponent, options.memo) as unknown as ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>;
     } else if (options.memo !== false) {
         ComputedWrappedComponent = memo(WrappedComponent) as unknown as ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>;
     }
 
-    let ConsumeComponent: FunctionComponent< ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>>,
-        index = ContextComponents.length - 1;
+    let ConsumeComponent = consumeComponent(
+        ComputedWrappedComponent,
+        wrappedComponentName,
+        mapContextsToProps,
+        ContextComponents,
+        ContextComponents.length - 1
+    );
 
-    do {
+    for (let index = ContextComponents.length - 2; index >= 0; index--) {
         ConsumeComponent = consumeComponent(
             ComputedWrappedComponent,
             wrappedComponentName,
             mapContextsToProps,
             ContextComponents,
-            index
+            index,
+            ConsumeComponent
         )
-
-        index--;
-    } while (index >= 0);
+    }
 
     if (options.forwardRef) return withForwardRef(ConsumeComponent);
 
