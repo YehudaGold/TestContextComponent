@@ -1,5 +1,6 @@
-const path = require('path'),
-      HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
     devtool: 'eval-source-map',
@@ -11,15 +12,9 @@ module.exports = {
     module: {
         rules: [
             {
-                enforce: 'pre',
-                est: /\.js$/u,
                 exclude: /node_modules/u,
-                loader: 'source-map-loader'
-            },
-            {
                 test: /\.(t|j)sx?$/u,
-                use: {loader: 'ts-loader'},
-                exclude: /node_modules/u
+                use: 'ts-loader'
             },
             {
                 test: /\.css$/u,
@@ -27,13 +22,13 @@ module.exports = {
             },
             {
                 test: /\.(png|jpg|gif|ico|eot|svg|ttf|woff|woff2)$/u,
-                use: [{loader: 'url-loader'}]
+                use: 'url-loader'
             }
         ]
     },
     output: {
-        path: path.resolve('example/dist'),
-        filename: '[name].bundle.js'
+        filename: '[name].bundle.js',
+        path: path.resolve('example/dist')
     },
     plugins: [
         new HtmlWebpackPlugin({

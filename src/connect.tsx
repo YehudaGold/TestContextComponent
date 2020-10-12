@@ -1,32 +1,50 @@
-/* eslint-disable max-lines-per-function */
+/* eslint-disable react/no-multi-comp */
 import React, {useContext, memo, ComponentType, FunctionComponent} from 'react';
 
 import ContextComponent from './contextComponent';
 import type {CCInternalProps, ConnectOptions, MapContextsToProps, ComponentOrRef, WrappedComponentProps} from './types';
 import {getDisplayName} from './utils/generics';
-import withForwardRef from './utils/withForwardRef';
+import withForwardRef, {ElementRefPropType} from './utils/withForwardRef';
 
-const consumeComponent = <CCProps, CCState, ConnectProps, ReturnsProps>(
+const connectComponent = <CCProps, CCState, ConnectProps, ReturnsProps>(
     WrappedComponent: ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>,
     wrappedComponentName: string,
     mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, ReturnsProps>,
-    ContextComponents: Array<typeof ContextComponent>,
-    index: number,
-    PreviousComponent?: FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>>
+    contextComponent: typeof ContextComponent,
+    numberOfContexts: number
 ): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> => {
-    const ConsumeComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>) => {
+    const ConnectComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>) => {
         const {contexts = [], forwardedRef, ...ownProps} = props;
-        contexts[index] = useContext(ContextComponents[index].componentContext);
-
-        if (PreviousComponent) {
-            return <PreviousComponent {...props} contexts={contexts} forwardedRef={forwardedRef} />;
-        }
+        contexts[numberOfContexts] = useContext(contextComponent.componentContext);
 
         return <WrappedComponent {...ownProps} {...mapContextsToProps(contexts, ownProps)} ref={forwardedRef} />;
     };
-    ConsumeComponent.displayName = `connect[${getDisplayName(ContextComponents[index])}](${wrappedComponentName})`;
+    ConnectComponent.displayName = `connect[${getDisplayName(contextComponent)}](${wrappedComponentName})`;
+    ConnectComponent.propTypes = {
+        /*
+         * Contexts: PropTypes.arrayOf(PropTypes.object),
+         * forwardedRef: ElementRefPropType
+         */
+    };
 
-    return ConsumeComponent;
+    return ConnectComponent;
+};
+
+const consumeContextComponent = <CCProps, CCState, ConnectProps, ReturnsProps>(
+    PreviousComponent: FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>>,
+    contextComponent: typeof ContextComponent,
+    index: number,
+    wrappedComponentName: string
+): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>> => {
+    const ConsumeContextComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, ReturnsProps>) => {
+        const {contexts = []} = props;
+        contexts[index] = useContext(contextComponent.componentContext);
+
+        return <PreviousComponent {...props} contexts={contexts} />;
+    };
+    ConsumeContextComponent.displayName = `connect[${getDisplayName(contextComponent)}](${wrappedComponentName})`;
+
+    return ConsumeContextComponent;
 };
 
 /** HOC to consume and transform `ContextComponents[]` contexts to props. */
@@ -45,28 +63,26 @@ const connect = <CCProps, CCState, ReturnsProps, ConnectProps>(
         ComputedWrappedComponent = memo(WrappedComponent) as unknown as ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>;
     }
 
-    let ConsumeComponent = consumeComponent(
+    const lastContextComponent = ContextComponents.pop();
+    if (!lastContextComponent) throw new Error("No contextComponent supplied to the connect function");
+
+    let ConnectComponent = connectComponent(
         ComputedWrappedComponent,
         wrappedComponentName,
         mapContextsToProps,
-        ContextComponents,
-        ContextComponents.length - 1
-    );
+        lastContextComponent,
+        ContextComponents.length
+    )
 
-    for (let index = ContextComponents.length - 2; index >= 0; index--) {
-        ConsumeComponent = consumeComponent(
-            ComputedWrappedComponent,
-            wrappedComponentName,
-            mapContextsToProps,
-            ContextComponents,
-            index,
-            ConsumeComponent
-        )
-    }
+    ConnectComponent = ContextComponents.reduceRight(
+        (PreviousComponent, contextComponent, index) =>
+            consumeContextComponent(PreviousComponent, contextComponent, index, wrappedComponentName),
+        ConnectComponent
+    )
 
-    if (options.forwardRef) return withForwardRef(ConsumeComponent);
+    if (options.forwardRef) return withForwardRef(ConnectComponent);
 
-    return ConsumeComponent;
+    return ConnectComponent;
 };
 
 export default connect;
