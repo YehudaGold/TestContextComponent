@@ -23,7 +23,7 @@ In order to create a shared state create a component that extends `ContextCompon
 
 ThemeContext.jsx
 ```jsx
-import ContextComponent from 'context-component';
+import {ContextComponent} from 'context-component';
 
 export default class ThemeContext extends ContextComponent {
 
