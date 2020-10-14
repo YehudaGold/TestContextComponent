@@ -1,12 +1,10 @@
-import React, {Component, Context, ComponentType, Consumer, ReactNode} from 'react';
+import React, {Component, Context, Consumer, ReactNode} from 'react';
 
 import connect from './connect';
-import {ConnectOptions, OwnProps, WrappedComponentProps} from './types';
+import {Actions, ConnectOptions, ContextValue, OwnProps, WrappedComponentType} from './shearedTypes';
 import {getDisplayName} from './utils/generics';
 import getActions from './utils/getActions';
 
-type Actions<CCProps, CCState> = Partial<ContextComponent<CCProps, CCState>>;
-type ContextValue<CCProps, CCState> = Actions<CCProps, CCState> & CCState | undefined;
 type ComponentContext<CCProps, CCState> = Context<ContextValue<CCProps, CCState>>;
 
 /**
@@ -35,12 +33,12 @@ class ContextComponent<CCProps, CCState> extends Component<CCProps, CCState> {
     }
 
     /** HOC to consume and transform the `ContextComponent` context to props. */
-    static connect<CCProps, CCState, ReturnsProps, ConnectProps>(
-        WrappedComponent: ComponentType<WrappedComponentProps<ConnectProps, ReturnsProps>>,
-        mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: OwnProps<ConnectProps>) => ReturnsProps,
-        options: ConnectOptions<WrappedComponentProps<ConnectProps, ReturnsProps>> = {}
+    static connect<CCProps, CCState, ConnectProps, MappedProps>(
+        WrappedComponent: WrappedComponentType<ConnectProps, MappedProps>,
+        mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: OwnProps<ConnectProps>) => MappedProps,
+        options: ConnectOptions<ConnectProps, MappedProps> = {}
     ): ReactNode {
-        return connect<CCProps, CCState, ReturnsProps, ConnectProps>(
+        return connect<CCProps, CCState, ConnectProps, MappedProps>(
             WrappedComponent,
             [this],
             ([context], ownProps) => mapContextToProps(context, ownProps),
