@@ -5,11 +5,11 @@ export default class IrrelevantContext extends ContextComponent {
     state = {theme: 'dark', irrelevant: 'a'};
 
     toggleTheme = () => {
-        this.setState(state => (state.theme === 'dark' ? {theme: 'light'} : {theme: 'dark'}));
+        this.setState(state => ({theme: state.theme === 'dark' ? 'light' : 'dark'}));
     };
 
     toggleIrrelevant = () => {
-        this.setState(state => (state.irrelevant === 'a' ? {irrelevant: 'b'} : {irrelevant: 'a'}));
+        this.setState(state => ({irrelevant: state.irrelevant === 'a' ? 'b' : 'a'}));
     };
 
 }

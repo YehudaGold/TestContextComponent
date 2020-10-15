@@ -1,7 +1,7 @@
-import React, {Component, Context, Consumer, ReactNode} from 'react';
+import React, {Component, Context, Consumer, ReactNode, FunctionComponent} from 'react';
 
 import connect from './connect';
-import {Actions, ConnectOptions, ContextValue, OwnProps, WrappedComponentType} from './shearedTypes';
+import {Actions, ConnectOptions, ContextValue, ForwardRefComponentType, WithoutInternalProps, WrappedComponentType} from './shearedTypes';
 import {getDisplayName} from './utils/generics';
 import getActions from './utils/getActions';
 
@@ -33,12 +33,12 @@ class ContextComponent<CCProps, CCState> extends Component<CCProps, CCState> {
     }
 
     /** HOC to consume and transform the `ContextComponent` context to props. */
-    static connect<CCProps, CCState, ConnectProps, MappedProps>(
-        WrappedComponent: WrappedComponentType<ConnectProps, MappedProps>,
-        mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: OwnProps<ConnectProps>) => MappedProps,
-        options: ConnectOptions<ConnectProps, MappedProps> = {}
-    ): ReactNode {
-        return connect<CCProps, CCState, ConnectProps, MappedProps>(
+    static connect<CCProps, CCState, OwnProps, MappedProps>(
+        WrappedComponent: WrappedComponentType<OwnProps, MappedProps>,
+        mapContextToProps: (context: ContextValue<CCProps, CCState>, ownProps: WithoutInternalProps<OwnProps>) => MappedProps,
+        options: ConnectOptions<OwnProps, MappedProps> = {}
+    ): FunctionComponent<OwnProps> | ForwardRefComponentType<OwnProps> {
+        return connect<CCProps, CCState, OwnProps, MappedProps>(
             WrappedComponent,
             [this],
             ([context], ownProps) => mapContextToProps(context, ownProps),

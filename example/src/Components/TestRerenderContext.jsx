@@ -11,11 +11,11 @@ class TestRerenderContext extends Component {
     state = {themeProp: 'dark', irrelevant: 'a'};
 
     toggleTheme = () => {
-        this.setState(state => (state.themeProp === 'dark' ? {themeProp: 'light'} : {themeProp: 'dark'}));
+        this.setState(state => ({themeProp: state.themeProp === 'dark' ? 'light' : 'dark'}));
     };
 
     toggleIrrelevant = () => {
-        this.setState(state => (state.irrelevant === 'a' ? {irrelevant: 'b'} : {irrelevant: 'a'}));
+        this.setState(state => ({irrelevant: state.irrelevant === 'a' ? 'b' : 'a'}));
     };
 
     render() {

@@ -3,21 +3,21 @@ import PropTypes from 'prop-types';
 import React, {useContext, memo, FunctionComponent, WeakValidationMap} from 'react';
 
 import ContextComponent from './contextComponent';
-import type {CCInternalProps, ConnectOptions, ForwardRefComponentType, ContextValue, OwnProps, WrappedComponentType} from './shearedTypes';
+import type {CCInternalProps, ConnectOptions, ForwardRefComponentType, ContextValue, WithoutInternalProps, WrappedComponentType} from './shearedTypes';
 import {getDisplayName} from './utils/generics';
 import withForwardRef, {ElementRefPropType} from './utils/withForwardRef';
 
-export type MapContextsToProps<CCProps, CCState, ConnectProps, MappedProps> =
-    (context: ContextValue<CCProps, CCState>[], ownProps: OwnProps<ConnectProps>) => MappedProps;
+export type MapContextsToProps<CCProps, CCState, OwnProps, MappedProps> =
+    (context: ContextValue<CCProps, CCState>[], ownProps: WithoutInternalProps<OwnProps>) => MappedProps;
 
-const connectComponent = <CCProps, CCState, ConnectProps, MappedProps>(
-    WrappedComponent: WrappedComponentType<ConnectProps, MappedProps>,
+const connectComponent = <CCProps, CCState, OwnProps, MappedProps>(
+    WrappedComponent: WrappedComponentType<OwnProps, MappedProps>,
     wrappedComponentName: string,
-    mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, MappedProps>,
+    mapContextsToProps: MapContextsToProps<CCProps, CCState, OwnProps, MappedProps>,
     contextComponent: typeof ContextComponent,
     numberOfContexts: number
-): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>> => {
-    const ConnectComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>) => {
+): FunctionComponent<OwnProps & CCInternalProps<CCProps, CCState, MappedProps>> => {
+    const ConnectComponent = (props: OwnProps & CCInternalProps<CCProps, CCState, MappedProps>) => {
         const {contexts = [], forwardedRef, ...ownProps} = props;
         contexts[numberOfContexts] = useContext(contextComponent.componentContext);
 
@@ -27,18 +27,18 @@ const connectComponent = <CCProps, CCState, ConnectProps, MappedProps>(
     ConnectComponent.propTypes = {
         contexts: PropTypes.arrayOf(PropTypes.object),
         forwardedRef: ElementRefPropType
-    } as unknown as WeakValidationMap<ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>>;
+    } as unknown as WeakValidationMap<OwnProps & CCInternalProps<CCProps, CCState, MappedProps>>;
 
     return ConnectComponent;
 };
 
-const consumeContextComponent = <CCProps, CCState, ConnectProps, MappedProps>(
-    PreviousComponent: FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>>,
+const consumeContextComponent = <CCProps, CCState, OwnProps, MappedProps>(
+    PreviousComponent: FunctionComponent<OwnProps & CCInternalProps<CCProps, CCState, MappedProps>>,
     contextComponent: typeof ContextComponent,
     index: number,
     wrappedComponentName: string
-): FunctionComponent<ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>> => {
-    const ConsumeContextComponent = (props: ConnectProps & CCInternalProps<CCProps, CCState, MappedProps>) => {
+): FunctionComponent<OwnProps & CCInternalProps<CCProps, CCState, MappedProps>> => {
+    const ConsumeContextComponent = (props: OwnProps & CCInternalProps<CCProps, CCState, MappedProps>) => {
         const {contexts = []} = props;
         contexts[index] = useContext(contextComponent.componentContext);
 
@@ -50,19 +50,19 @@ const consumeContextComponent = <CCProps, CCState, ConnectProps, MappedProps>(
 };
 
 /** HOC to consume and transform `ContextComponents[]` contexts to props. */
-const connect = <CCProps, CCState, ConnectProps, MappedProps>(
-    WrappedComponent: WrappedComponentType<ConnectProps, MappedProps>,
+const connect = <CCProps, CCState, OwnProps, MappedProps>(
+    WrappedComponent: WrappedComponentType<OwnProps, MappedProps>,
     ContextComponents: Array<typeof ContextComponent>,
-    mapContextsToProps: MapContextsToProps<CCProps, CCState, ConnectProps, MappedProps>,
-    options: ConnectOptions<ConnectProps, MappedProps> = {}
-): FunctionComponent<ConnectProps> | ForwardRefComponentType<ConnectProps> => {
+    mapContextsToProps: MapContextsToProps<CCProps, CCState, OwnProps, MappedProps>,
+    options: ConnectOptions<OwnProps, MappedProps> = {}
+): FunctionComponent<OwnProps> | ForwardRefComponentType<OwnProps> => {
     const wrappedComponentName = getDisplayName(WrappedComponent); // Cached before memo
 
     let ComputedWrappedComponent = WrappedComponent;
     if (typeof options.memo === 'function') {
-        ComputedWrappedComponent = memo(WrappedComponent, options.memo) as unknown as WrappedComponentType<ConnectProps, MappedProps>;
+        ComputedWrappedComponent = memo(WrappedComponent, options.memo) as unknown as WrappedComponentType<OwnProps, MappedProps>;
     } else if (options.memo !== false) {
-        ComputedWrappedComponent = memo(WrappedComponent) as unknown as WrappedComponentType<ConnectProps, MappedProps>;
+        ComputedWrappedComponent = memo(WrappedComponent) as unknown as WrappedComponentType<OwnProps, MappedProps>;
     }
 
     const lastContextComponent = ContextComponents.pop();
