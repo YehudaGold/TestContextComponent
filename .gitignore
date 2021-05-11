@@ -17,3 +17,6 @@ example/dist/
 .env.production.local
 
 *.log
+
+# build artifacts
+*.tgz
